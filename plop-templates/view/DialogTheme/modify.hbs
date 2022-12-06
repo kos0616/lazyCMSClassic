@@ -1,0 +1,93 @@
+<template>
+  <el-form
+    v-loading="$store.state.loading.isShow"
+    @submit.prevent="handleSubmitForm()"
+    :model="form"
+    label-position="top"
+    ref="REF_FORM"
+  >
+    {{#each form}}
+    <el-form-item
+      :label="$t(inputForm.{{this.key}}.label)"
+      :prop="inputForm.{{this.key}}.id"
+      :rules="inputForm.{{this.key}}.rules"
+    >
+      {{> inputPartial}}
+    </el-form-item>
+    {{/each}}
+    <hr />
+    <div>
+      <el-button native-type="submit" type="success">
+        <i class="fa-fw fas fa-save"></i>
+        \{{ $t('Theme.save') }}
+      </el-button>
+      <el-button
+        @click="$emit('close')"
+        :title="$t('Theme.cancel')"
+        class="border-0"
+      >
+        <i class="fas fa-times"></i>
+        \{{ $t('Theme.cancel') }}
+      </el-button>
+    </div>
+  </el-form>
+</template>
+
+<script lang='ts'>
+import { reactive, toRefs, onMounted, watch, defineComponent } from 'vue';
+import Modify from './Service/Modify';
+import inputForm from './form';
+import DoModify from './Service/DoModify';
+import ELFORM from '@/modules/FPKG-20000-Util/API/elForm/index';
+
+export default defineComponent({
+  name: '{{dashCase BASE_NAME}}--Modify',
+  props: {
+    id: { type: Number, required: true },
+  },
+  setup(prop, { emit }) {
+    const { REF_FORM, submitForm } = ELFORM();
+    const data = reactive({
+      form: {} as any,
+    });
+
+    /**
+     * getInfo 取得資料
+     */
+    const getInfo = async () => {
+      data.form = {};
+      const {{key}} = prop.id;
+      if (!{{key}}) return;
+      const getter = await Modify({ {{key}} });
+      if (getter) data.form = getter;
+    };
+
+    /** 送出表單 */
+    const handleSubmitForm = async () => {
+      await submitForm();
+      await DoModify(data.form);
+      emit('close');
+      emit('update');
+    };
+
+    onMounted(() => {
+      getInfo();
+    });
+
+    watch(
+      ()=> prop.id,
+      () => {
+      getInfo();
+    });
+
+    const refData = toRefs(data);
+
+    return {
+      ...refData,
+      REF_FORM,
+      handleSubmitForm,
+      inputForm,
+    };
+  },
+});
+</script>

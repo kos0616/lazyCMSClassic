@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "plop": "plop",
+    "test": "node lib/fileReader.js"
+  },
+  "description": "File generator",
+  "license": "MIT",
+  "author": {
+    "name": "Mark Liang",
+    "url": "https://github.com/kos0616/lazyCMS"
+  },
+  "dependencies": {
+    "plop": "^2.7.4"
+  }
+}

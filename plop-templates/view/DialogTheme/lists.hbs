@@ -1,0 +1,291 @@
+<template>
+  <div>
+    <el-table
+      v-loading="$store.state.loading.isShow"
+      v-if="screenWidth > 767"
+      :data="tableData"
+      :height="contentSize.height"
+      :width="contentSize.width"
+      stripe
+      key="pc"
+      highlight-current-row
+      @selection-change="handleSelectionChange"
+      fit
+      border
+      size="mini"
+    >
+      <el-table-column type="selection" width="40" />
+      {{#each form}}
+      {{#if this.spec.options}}
+      <el-table-column
+        :label="$t(inputForm.{{this.key}}.label)"
+        :prop="inputForm.{{this.key}}.id"
+      >
+        <template #default="prop">
+          <status
+            :value="prop.row[inputForm.{{this.key}}.id]"
+            :options="inputForm.{{this.key}}.options"
+          />
+        </template>
+      </el-table-column>
+      {{else}}
+      <el-table-column
+        :label="$t(inputForm.{{this.key}}.label)"
+        :prop="inputForm.{{this.key}}.id"
+      />
+      {{/if}}
+      {{/each}}
+      <el-table-column :label="$t('Util.operate')" width="200">
+        <template #default="prop">
+          <el-button
+            v-if="CRUD & 4"
+            @click="handleInfo(prop.row.{{~key~}})"
+            :title="$t('Util.view')"
+            type="info"
+            size="small"
+          >
+            <i class="el-icon-view" />
+          </el-button>
+          <el-button
+            v-if="CRUD & 2"
+            @click="handleModify(prop.row.{{~key~}})"
+            :title="$t('Util.edit')"
+            type="success"
+            size="small"
+          >
+            <i class="fas fa-edit" />
+          </el-button>
+          <el-button
+            v-if="CRUD & 1"
+            @click="doDelete(prop.row)"
+            :title="$t('Util.delete')"
+            type="danger"
+            size="small"
+          >
+            <i class="el-icon-delete"></i>
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 手機板 -->
+    <div v-else>
+      <div
+        v-if="(!tableData || !tableData.length) && !$store.state.loading.isShow"
+        class="p-3"
+      >
+        <div class="p-5 bg-light rounded-3">
+          <div class="container-fluid py-5">
+            <h3 v-t="'Util.noData'" class="mb-3"></h3>
+            <hr />
+            <el-button @click="$router.go(-1)" type="primary">
+              <i class="fa-fw fas fa-chevron-left"></i>
+              \{{ $t('Theme.back') }}
+            </el-button>
+          </div>
+        </div>
+      </div>
+      <el-card
+        v-loading="$store.state.loading.isShow"
+        style="margin: 5px"
+        shadow="hover"
+        v-for="(item, index) in tableData"
+        :key="index"
+      >
+        <el-form>
+          {{#each form}}
+          <el-form-item :label="$t(inputForm.{{this.key}}.label)">
+          {{#if this.spec.options}}
+            <status
+              :value="item[inputForm.{{this.key}}.id]"
+              :options="inputForm.{{this.key}}.options"
+            />
+          {{else}}
+            <span>\{{ item[inputForm.{{this.key}}.id] }}</span>
+          {{/if}}
+          </el-form-item>
+          {{/each}}
+          <el-form-item :label="$t('Util.operate')">
+            <el-button
+              v-if="CRUD & 4"
+              @click="handleInfo(item.{{~key~}})"
+              :title="$t('Util.view')"
+              type="info"
+              size="small"
+            >
+              <i class="el-icon-view" />
+            </el-button>
+            <el-button
+              v-if="CRUD & 2"
+              @click="handleModify(item.{{~key~}})"
+              :title="$t('Util.edit')"
+              type="success"
+              size="small"
+            >
+              <i class="fas fa-edit" />
+            </el-button>
+            <el-button
+              v-if="CRUD & 1"
+              @click="doDelete(item)"
+              :title="$t('Util.delete')"
+              type="danger"
+              size="small"
+            >
+              <i class="el-icon-delete"></i>
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </div>
+    <el-dialog
+      v-model="dialogCreate"
+      :title="$t('Theme.create')"
+      custom-class="RWD-Dialog"
+    >
+      <create @close="dialogCreate = false" @update="getLists" />
+    </el-dialog>
+    <el-dialog
+      v-model="dialogModify"
+      :title="$t('Theme.modify')"
+      custom-class="RWD-Dialog"
+    >
+      <modify
+        @close="
+          dialogModify = false;
+          activeKey = null;
+        "
+        @update="getLists"
+        :id="activeKey"
+      />
+    </el-dialog>
+    <el-dialog
+      v-model="dialogInfo"
+      :title="$t('Theme.info')"
+      custom-class="RWD-Dialog"
+    >
+      <info
+        @close="
+          dialogInfo = false;
+          activeKey = null;
+        "
+        @update="getLists"
+        :id="activeKey"
+      />
+    </el-dialog>
+    <el-dialog
+      v-model="dialogAdvSearch"
+      :title="$t('Theme.AdvancedSearch')"
+      custom-class="RWD-Dialog"
+    >
+      <advSearch @close="dialogAdvSearch = false" />
+    </el-dialog>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, reactive, toRefs, onMounted, inject } from 'vue';
+import inputForm from './form';
+import Lists, { typeLists } from './Service/Lists';
+import Delete from './Service/Delete';
+import advSearch from './advSearch.vue';
+import { utilTools } from '@/modules/FPKG-20000-Util/prototypes/utilTools';
+import { useRoute } from 'vue-router';
+import create from './create.vue';
+import modify from './modify.vue';
+import info from './info.vue';
+
+export default defineComponent({
+  name: '{{dashCase BASE_NAME}}--Lists',
+  components: { advSearch, create, modify, info },
+  setup() {
+    const data = reactive({
+      tableData: [] as typeLists.item[],
+      selected: [] as typeLists.item[],
+      dialogAdvSearch: false,
+      dialogCreate: false,
+      dialogModify: false,
+      dialogInfo: false,
+      activeKey: null as number | null,
+    });
+    const $route = useRoute();
+    const { screenWidth, proxy, CRUD } = utilTools();
+
+    // table選擇的項目
+    const handleSelectionChange = (val: typeLists.item[]): void => {
+      data.selected = val;
+    };
+
+    const getLists = async (params?: typeLists.request) => {
+      data.tableData = [];
+      const getter = await Lists(params);
+      if (getter && Array.isArray(getter.list)) {
+        data.tableData = getter.list;
+      }
+    };
+
+    const doDelete = async (item: typeLists.item[]) => {
+      const doDelete = await Delete(item);
+      if (doDelete) {
+        data.selected = [];
+        getLists();
+      }
+    };
+
+    const handleModify = (id: number) => {
+      data.dialogModify = true;
+      data.activeKey = id;
+    };
+
+    const handleInfo = (id: number) => {
+      data.dialogInfo = true;
+      data.activeKey = id;
+    };
+
+    onMounted(async () => {
+      /** 從bus偵測刪除行為(複選) */
+      proxy.$bus.$on('delete', () => {
+        doDelete(data.selected);
+      });
+
+      proxy.$bus.$on('create', () => {
+        data.dialogCreate = true;
+      });
+
+      /** 從bus偵測刪除行為(複選) */
+      proxy.$bus.$on('advSearch', () => {
+        data.dialogAdvSearch = true;
+      });
+
+      const query = {
+        ...$route.query,
+        ...$route.params,
+      };
+      getLists(query);
+    });
+    const refData = toRefs(data);
+    const contentSize = inject('contentSize');
+
+    return {
+      inputForm,
+      ...refData,
+      screenWidth,
+      CRUD,
+      getLists,
+      contentSize,
+      doDelete,
+      handleSelectionChange,
+      handleModify,
+      handleInfo,
+    };
+  },
+  beforeRouteUpdate(to, from, next) {
+    next();
+    const params = {
+      ...to.query,
+      ...to.params,
+    };
+    /** 取得搜尋參數: 從 query, params, user設定 進行整理 */
+    this.getLists(params);
+  },
+});
+</script>

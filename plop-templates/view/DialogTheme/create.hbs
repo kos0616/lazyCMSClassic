@@ -1,0 +1,98 @@
+<template>
+  <el-form
+    v-loading="$store.state.loading.isShow"
+    @submit.prevent="handleSubmitForm"
+    :model="form"
+    label-position="top"
+    ref="REF_FORM"
+  >
+    {{#each form}}
+    <el-form-item
+      :label="$t(inputForm.{{this.key}}.label)"
+      :prop="inputForm.{{this.key}}.id"
+      :rules="inputForm.{{this.key}}.rules"
+    >
+      {{> inputPartial}}
+    </el-form-item>
+    {{/each}}
+    <hr />
+    <div>
+      <el-button
+        :title="$t('Theme.saveAndReturn')"
+        native-type="submit"
+        type="success"
+      >
+        <i class="fas fa-save"></i>
+        \{{ $t('Theme.saveAndReturn') }}
+      </el-button>
+      <el-button
+        :title="$t('Theme.keepCreate')"
+        @click="keepCreate = true"
+        native-type="submit"
+      >
+        <i class="fas fa-plus"></i>
+        \{{ $t('Theme.keepCreate') }}
+      </el-button>
+      <el-button
+        @click="$emit('close')"
+        :title="$t('Theme.cancel')"
+        class="border-0"
+      >
+        <i class="fas fa-times"></i>
+        \{{ $t('Theme.cancel') }}
+      </el-button>
+    </div>
+  </el-form>
+</template>
+
+<script lang='ts'>
+import { defineComponent, reactive, toRefs } from 'vue';
+import ELFORM from '@/modules/FPKG-20000-Util/API/elForm/index';
+import Create, { typeCreate } from './Service/Create';
+import inputForm from './form';
+
+export default defineComponent({
+  name: '{{dashCase BASE_NAME}}--Create',
+  setup(prop, { emit }) {
+    const { REF_FORM, reset, submitForm } = ELFORM();
+    const data = reactive({
+      form: {
+        {{#each form}}
+        {{#isSwitch this.spec.options}}
+        {{this.id}}: '{{this.spec.options.0.key}}',
+        {{/isSwitch}}
+        {{/each}}
+      } as typeCreate.request,
+      keepCreate: false,
+    });
+
+    /** 送出表單 */
+    const handleSubmitForm = async () => {
+      await submitForm();
+      const getter = await Create(data.form);
+      if (getter) {
+        if (!data.keepCreate) {
+          emit('close');
+        }
+        resetForm();
+        emit('update');
+        data.keepCreate = false;
+      }
+    };
+
+    /** 清除表單 */
+    const resetForm = () => {
+      reset();
+    };
+
+    const refData = toRefs(data);
+
+    return {
+      ...refData,
+      handleSubmitForm,
+      REF_FORM,
+      inputForm,
+    };
+  },
+});
+</script>

@@ -1,0 +1,26 @@
+import errorCode from '../../errorCode'; // 進行後端error code提示
+import $http from '@/modules/FPKG-230000-BackendCore/prototypes/axios'; // 後端溝通
+import { response as protoRes, request as protoReq } from './Info';
+
+const API = '{{BASE_API}}/modify';
+
+export type request = protoReq;
+
+export type response = protoRes;
+
+export default async (
+  params: request,
+): Promise<response> => {
+  return $http
+    .get(API, { params })
+    .then(d => {
+      if (d.data.code === 0) {
+        const result = d.data.response;
+        return result;
+      }
+      throw d;
+    })
+    .catch(d => {
+      errorCode(d.data);
+    });
+};

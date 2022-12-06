@@ -1,0 +1,14 @@
+[
+  {
+    path: '{{ROUTER_LAST}}/lists',
+    name: '{{ROUTER_FIRST}}-{{ROUTER_LAST}}-lists',
+    component: () =>
+      import(/* webpackChunkName: "{{CHUNK}}" */ './{{folder}}/lists.vue'),
+    props: true,
+    meta: {
+      title: '{{NODE}}',
+      url: '{{API_AUTH}}',
+      toolbar: ['search', 'advSearch', 'pager', 'create', 'delete'],
+    },
+  },
+]

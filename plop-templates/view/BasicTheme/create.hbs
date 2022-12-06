@@ -1,0 +1,97 @@
+<template>
+  <div
+    class="jz-card md:w-2/3 2xl:w-1/2"
+    v-loading="$store.state.loading.isShow"
+  >
+    <div class="card-header" v-t="'Util.create'"></div>
+    <div class="card-body">
+      <el-form
+        @submit.prevent="handleSubmitForm"
+        :model="form"
+        ref="REF_FORM"
+        class="md:grid md:grid-cols-2 gap-4"
+      >
+        {{#each form}}
+        <el-form-item
+          :label="$t(inputForm.{{this.key}}.label)"
+          :prop="inputForm.{{this.key}}.id"
+          :rules="inputForm.{{this.key}}.rules"
+          {{#if this.spec.memo}}
+          class="col-span-2"
+          {{/if}}
+        >
+          {{> inputPartial}}
+        </el-form-item>
+        {{/each}}
+        <input type="submit" class="no-show" >
+      </el-form>
+    </div>
+  </div>
+
+</template>
+
+<script lang='ts'>
+import { defineComponent, reactive, toRefs, onMounted } from 'vue';
+import { utilTools } from '@/modules/FPKG-20000-Util/prototypes/utilTools';
+import ELFORM from '@/modules/FPKG-20000-Util/API/elForm/index';
+import { useRouter } from 'vue-router';
+import Create, { request } from './Service/Create';
+import inputForm from './form';
+
+export default defineComponent({
+  name: '{{dashCase BASE_NAME}}--Create',
+  setup() {
+    const { proxy } = utilTools();
+    const { REF_FORM, reset, submitForm } = ELFORM();
+    const router = useRouter();
+    const data = reactive({
+      form: {
+        {{#each form}}
+        {{#isSwitch this.spec.options}}
+        {{this.id}}: '{{this.spec.options.0.key}}',
+        {{/isSwitch}}
+        {{/each}}
+      } as request,
+      keepCreate: false,
+    });
+
+    /** 送出表單 */
+    const handleSubmitForm = async () => {
+      await submitForm();
+      const getter = await Create(data.form);
+      if (getter) {
+        if (!data.keepCreate) {
+          router.push('/{{BASE}}/lists');
+        }
+        resetForm();
+        data.keepCreate = false;
+      }
+    };
+
+    /** 清除表單 */
+    const resetForm = () => {
+      reset();
+    };
+
+    onMounted(() => {
+      proxy.$bus.$on('saveAndGo', () => {
+        handleSubmitForm();
+      });
+
+      proxy.$bus.$on('keepCreate', () => {
+        data.keepCreate = true;
+        handleSubmitForm();
+      });
+    });
+
+    const refData = toRefs(data);
+
+    return {
+      ...refData,
+      handleSubmitForm,
+      REF_FORM,
+      inputForm,
+    };
+  },
+});
+</script>

@@ -1,0 +1,79 @@
+<template>
+  <div
+    class="jz-card md:w-2/3 2xl:w-1/2"
+    v-loading="$store.state.loading.isShow"
+  >
+    <div class="card-header" v-t="'Util.info'"></div>
+    <el-descriptions :column="screenWidth > 767 ? 2 : 1" border>
+      {{#each form}}
+      <el-descriptions-item
+        :label="$t(inputForm.{{this.key}}.label)"
+        align="center"
+        {{#if this.spec.memo}}
+        span="2"
+        {{/if}}
+      >
+        {{#if this.spec.options}}
+        <status
+          :value="form[inputForm.{{this.key}}.id]"
+          :options="inputForm.{{this.key}}.options"
+        />
+        {{else}}
+        \{{ form[inputForm.{{this.key}}.id] || '&nbsp;' }}
+        {{/if}}
+      </el-descriptions-item>
+      {{/each}}
+    </el-descriptions>
+  </div>
+</template>
+
+<script lang='ts'>
+import { reactive, toRefs, onMounted, defineComponent } from 'vue';
+import { utilTools } from '@/modules/FPKG-20000-Util/prototypes/utilTools';
+import Info, { response } from './Service/Info';
+import inputForm from './form';
+import { useRouter } from 'vue-router';
+
+export default defineComponent({
+  name: '{{dashCase BASE_NAME}}--Info',
+  props: ['{{key}}'],
+  setup(props) {
+    const { screenWidth, proxy } = utilTools();
+    const $router = useRouter();
+
+    const data = reactive({
+      form: {} as response,
+    });
+
+    /**
+     * getInfo 取得資料
+     */
+    const getInfo = async (): Promise<void> => {
+      const { {{key}} } = props;
+      if (!{{key}}) return;
+      const getter = await Info({
+        {{key}}: Number({{key}}),
+      });
+      if (getter) data.form = getter;
+    };
+
+    onMounted(() => {
+      /** 從bus偵測刪除行為(複選) */
+      proxy.$bus.$on('modify', () => {
+        $router.push(
+          `/{{BASE}}/modify/${props.{{~key~}} }`,
+        );
+      });
+      getInfo();
+    });
+
+    const refData = toRefs(data);
+
+    return {
+      ...refData,
+      screenWidth,
+      inputForm,
+    };
+  },
+});
+</script>

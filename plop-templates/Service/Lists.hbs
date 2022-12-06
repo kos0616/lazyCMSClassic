@@ -1,0 +1,57 @@
+import errorCode from '../../errorCode'; // 進行後端error code提示
+import $http from '@/modules/FPKG-230000-BackendCore/prototypes/axios'; // 後端溝通
+{{#unless subList}}
+import $store from '@/modules/FPKG-50000-Vuex/index'; // lists 與axios溝通
+{{/unless}}
+import { response as typeProto } from './Info';
+
+const API = '{{BASE_API}}/lists';
+
+export type request = pageinator & {
+  /** 複合搜尋 */
+  search_complex?: string;
+  {{#each searchTypes}}
+  {{{this}}}
+  {{/each}}
+};
+
+export type response = { list: item[]; paginator: pageinator };
+
+export type item = typeProto;
+
+export default async (req?: request): Promise<response> => {
+  const params = preFormater(req);
+  return $http
+    .get(API, { params })
+    .then(d => {
+      if (d.data.code === 0) {
+        const result = d.data.response;
+        {{#unless subList}}
+        $store.dispatch('getList', result);
+        {{/unless}}
+        if (result.list !== null && result.list.length) {
+          return result;
+        }
+        return { ...d.data.response, list: [] };
+      }
+      throw d;
+    })
+    .catch(d => {
+      errorCode(d.data);
+    });
+};
+
+function preFormater(req?: request): request {
+  return {
+    search_complex: req ? req.search_complex : undefined,
+    {{#each searchTypesFormater}}
+    {{{this}}}
+    {{/each}}
+    sort: req ? req.sort : undefined,
+    sort_type: req ? req.sort_type : undefined,
+    count: req ? req.count : undefined,
+    page: req ? req.page : undefined,
+    page_num: req ? req.page_num : undefined,
+    perpage: req ? req.perpage : undefined,
+  };
+}

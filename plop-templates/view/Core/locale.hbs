@@ -1,0 +1,8 @@
+"{{ROUTER_LAST}}": {
+  {{#each form}}
+  "{{this.key}}": "{{this.intro}}",
+  {{#each this.spec.options}}
+  "{{../key}}_{{@index}}":"{{this.value}}",
+  {{/each}}
+  {{/each}}
+}

@@ -1,0 +1,50 @@
+[
+  {
+    path: '{{ROUTER_LAST}}/lists',
+    name: '{{ROUTER_FIRST}}-{{ROUTER_LAST}}-lists',
+    component: () =>
+      import(/* webpackChunkName: "{{CHUNK}}" */ './{{folder}}/lists.vue'),
+    props: true,
+    meta: {
+      title: '{{NODE}}',
+      url: '{{API_AUTH}}',
+      toolbar: ['search', 'advSearch', 'pager', 'create', 'delete'],
+    },
+  },
+  {
+    path: '{{ROUTER_LAST}}/create',
+    name: '{{ROUTER_FIRST}}-{{ROUTER_LAST}}-create',
+    component: () =>
+      import(/* webpackChunkName: "{{CHUNK}}" */ './{{folder}}/create.vue'),
+    props: true,
+    meta: {
+      title: '{{NODE}}',
+      url: '{{API_AUTH}}',
+      toolbar: ['saveAndGo', 'keepCreate'],
+    },
+  },
+  {
+    path: '{{ROUTER_LAST}}/info/:{{key}}',
+    name: '{{ROUTER_FIRST}}-{{ROUTER_LAST}}-info',
+    props: true,
+    component: () =>
+      import(/* webpackChunkName: "{{CHUNK}}" */ './{{folder}}/info.vue'),
+    meta: {
+      title: '{{NODE}}',
+      url: '{{API_AUTH}}',
+      toolbar: ['modify'],
+    },
+  },
+  {
+    path: '{{ROUTER_LAST}}/modify/:{{key}}',
+    name: '{{ROUTER_FIRST}}-{{ROUTER_LAST}}-modify',
+    props: true,
+    component: () =>
+      import(/* webpackChunkName: "{{CHUNK}}" */ './{{folder}}/modify.vue'),
+    meta: {
+      title: '{{NODE}}',
+      url: '{{API_AUTH}}',
+      toolbar: ['save', 'info'],
+    },
+  },
+]

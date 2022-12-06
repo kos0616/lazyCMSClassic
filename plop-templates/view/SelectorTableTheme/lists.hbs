@@ -1,0 +1,94 @@
+<template>
+  <div>
+    <pager
+      @searching="handleSearch"
+      :paginator="paginator"
+      :placeholder="$t('{{properCase ROUTER_FIRST}}.{{ROUTER_LAST}}.placeholder')"
+    />
+    <el-table
+      v-loading="$store.state.loading.isShow"
+      :data="tableData"
+      width="100%"
+      highlight-current-row
+      fit
+      border
+      size="mini"
+      class="shadow-none"
+    >
+      <el-table-column :label="$t('Util.insert')" width="80">
+        <template #default="prop">
+          <el-button
+            @click="$emit('add', prop.row)"
+            :title="$t('Util.insert')"
+            :disabled="exists.includes(prop.row.{{key}})"
+            type="success"
+            size="small"
+          >
+            <i class="fas fa-plus"></i>
+          </el-button>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        :label="$t('{{properCase ROUTER_FIRST}}.{{ROUTER_LAST}}.{{form.0.key}}')"
+        prop="{{form.0.id}}"
+      />
+    </el-table>
+  </div>
+</template>
+
+<script lang="ts">
+import {
+  defineComponent,
+  PropType,
+  toRefs,
+  reactive,
+  onMounted,
+  watch
+} from 'vue';
+import pager from '@/modules/FPKG-230000-BackendCore/components/pager.vue';
+import Lists, { typeLists } from '../Service/{{ROUTER_LAST}}Lists';
+
+export default defineComponent({
+  name: '{{dashCase BASE_NAME}}--subLists',
+  components: { pager },
+  props: {
+    exists: { type: Array as PropType<number[]>, default: () => [] },
+  },
+  setup(props) {
+    const data = reactive({
+      tableData: [] as typeLists.item[],
+      paginator: {} as pageinator,
+    });
+
+    const getLists = async (params?: Record<string, string> | undefined) => {
+      data.tableData = [];
+      const getter = await Lists(params);
+
+      if (getter && Array.isArray(getter.list)) {
+        data.tableData = getter.list;
+        data.paginator = getter.paginator;
+      }
+    };
+
+    const handleSearch = async (query: Record<string, string>) => {
+      getLists(query);
+    };
+
+    onMounted(async () => {
+      getLists();
+    });
+
+    watch(() => props.exists, () => {
+      getLists();
+    });
+
+    const refData = toRefs(data);
+
+    return {
+      ...refData,
+      handleSearch,
+    };
+  },
+});
+</script>

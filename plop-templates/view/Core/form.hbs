@@ -1,0 +1,29 @@
+import $i18n from '@/modules/FPKG-230000-BackendCore/lang';
+
+export default {
+  {{#each form}}
+  {{this.key}}: {
+    label: '{{properCase ../ROUTER_FIRST}}.{{../ROUTER_LAST}}.{{this.key}}',
+    id: '{{this.id}}',
+    searchId: 'search_{{this.id}}',
+    {{#if this.spec.options}}
+    options: [
+    {{#each this.spec.options}}
+      {
+        value: '{{this.key}}',
+        label: '{{properCase ../../ROUTER_FIRST}}.{{../../ROUTER_LAST}}.{{../key}}_{{@index}}',
+      },
+    {{/each}}
+    ],
+    {{/if}}
+    {{#if this.required}}
+    rules: {
+      required: true,
+      message: $i18n.global.t('Util.isRequired', {
+        label: $i18n.global.t('{{properCase ../ROUTER_FIRST}}.{{../ROUTER_LAST}}.{{this.key}}'),
+      }),
+    },
+    {{/if}}
+  },
+  {{/each}}
+}

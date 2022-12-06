@@ -1,0 +1,67 @@
+<template>
+  <el-form
+    v-loading="$store.state.loading.isShow"
+    label-position="top"
+  >
+    {{#each form}}
+    <el-form-item
+      :label="$t(inputForm.{{this.key}}.label)"
+    >
+    {{#if this.spec.options}}
+      <status
+        :value="form[inputForm.{{this.key}}.id]"
+        :options="inputForm.{{this.key}}.options"
+      />
+      {{else}}
+      \{{ form[inputForm.{{this.key}}.id] || '&nbsp;' }}
+      {{/if}}
+    </el-form-item>
+    {{/each}}
+  </el-form>
+</template>
+
+<script lang='ts'>
+import { reactive, toRefs, onMounted, watch, defineComponent } from 'vue';
+import Info from './Service/Info';
+import inputForm from './form';
+
+export default defineComponent({
+  name: '{{dashCase BASE_NAME}}--Info',
+  props: {
+    id: { type: Number, required: true },
+  },
+  setup(prop) {
+    const data = reactive({
+      form: {} as any,
+    });
+
+    /**
+     * getInfo 取得資料
+     */
+    const getInfo = async (): Promise<void> => {
+      data.form = {};
+      const {{key}} = prop.id;
+      if (!{{key}}) return;
+      const getter = await Info({ {{key}} });
+      if (getter) data.form = getter;
+    };
+
+    onMounted(() => {
+      getInfo();
+    });
+
+    watch(
+      ()=> prop.id,
+      () => {
+      getInfo();
+    });
+
+    const refData = toRefs(data);
+
+    return {
+      ...refData,
+      inputForm,
+    };
+  },
+});
+</script>

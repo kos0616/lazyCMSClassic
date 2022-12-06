@@ -1,0 +1,27 @@
+import { ElMessage as $message } from 'element-plus'; // 取得警告標籤
+import $i18n from '@/modules/FPKG-230000-BackendCore/lang';
+import $http from '@/modules/FPKG-230000-BackendCore/prototypes/axios'; // 後端溝通
+import errorCode from '../../errorCode'; // 進行後端error code提示
+
+const API = '{{BASE_API}}/create';
+
+export type request = {
+  {{#each types}}
+  {{{this}}}
+  {{/each}}
+};
+
+export default async (request: request) => {
+  return $http
+    .post(API, request)
+    .then(d => {
+      if (d.data.code === 0) {
+        $message.success($i18n.global.t('Util.createComplete'));
+        return d;
+      }
+      throw d;
+    })
+    .catch(d => {
+      errorCode(d.data);
+    });
+};
