@@ -22,7 +22,7 @@
 
 <script lang='ts'>
 import { reactive, toRefs, onMounted, watch, defineComponent } from 'vue';
-import Info from './Service/Info';
+import Info, { response } from './Service/Info';
 import inputForm from './form';
 
 export default defineComponent({
@@ -32,7 +32,7 @@ export default defineComponent({
   },
   setup(prop) {
     const data = reactive({
-      form: {} as any,
+      form: {} as response,
     });
 
     /**

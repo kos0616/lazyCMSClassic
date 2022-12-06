@@ -48,7 +48,7 @@
 <script lang='ts'>
 import { defineComponent, reactive, toRefs } from 'vue';
 import ELFORM from '@/modules/FPKG-20000-Util/API/elForm/index';
-import Create, { typeCreate } from './Service/Create';
+import Create, { request } from './Service/Create';
 import inputForm from './form';
 
 export default defineComponent({
@@ -62,7 +62,7 @@ export default defineComponent({
         {{this.id}}: '{{this.spec.options.0.key}}',
         {{/isSwitch}}
         {{/each}}
-      } as typeCreate.request,
+      } as request,
       keepCreate: false,
     });
 
