@@ -39,7 +39,6 @@ export default defineComponent({
      * getInfo 取得資料
      */
     const getInfo = async (): Promise<void> => {
-      data.form = {};
       const {{key}} = prop.id;
       if (!{{key}}) return;
       const getter = await Info({ {{key}} });
