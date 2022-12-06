@@ -47,7 +47,7 @@ import {
   watch
 } from 'vue';
 import pager from '@/modules/FPKG-230000-BackendCore/components/pager.vue';
-import Lists, { typeLists } from '../Service/{{ROUTER_LAST}}Lists';
+import Lists, { item } from '../Service/{{ROUTER_LAST}}Lists';
 
 export default defineComponent({
   name: '{{dashCase BASE_NAME}}--subLists',
@@ -57,7 +57,7 @@ export default defineComponent({
   },
   setup(props) {
     const data = reactive({
-      tableData: [] as typeLists.item[],
+      tableData: [] as item[],
       paginator: {} as pageinator,
     });
 
