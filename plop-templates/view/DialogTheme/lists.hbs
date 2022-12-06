@@ -18,7 +18,7 @@
       {{#each form}}
       {{#if this.spec.options}}
       <el-table-column
-        :label="$t(inputForm.{{this.key}}.label)"
+        :label="$i18n.global.t(inputForm.{{this.key}}.label)"
         :prop="inputForm.{{this.key}}.id"
       >
         <template #default="prop">
@@ -30,17 +30,17 @@
       </el-table-column>
       {{else}}
       <el-table-column
-        :label="$t(inputForm.{{this.key}}.label)"
+        :label="$i18n.global.t(inputForm.{{this.key}}.label)"
         :prop="inputForm.{{this.key}}.id"
       />
       {{/if}}
       {{/each}}
-      <el-table-column :label="$t('Util.operate')" width="200">
+      <el-table-column :label="$i18n.global.t('Util.operate')" width="200">
         <template #default="prop">
           <el-button
             v-if="CRUD & 4"
             @click="handleInfo(prop.row.{{~key~}})"
-            :title="$t('Util.view')"
+            :title="$i18n.global.t('Util.view')"
             type="info"
             size="small"
           >
@@ -49,7 +49,7 @@
           <el-button
             v-if="CRUD & 2"
             @click="handleModify(prop.row.{{~key~}})"
-            :title="$t('Util.edit')"
+            :title="$i18n.global.t('Util.edit')"
             type="success"
             size="small"
           >
@@ -58,7 +58,7 @@
           <el-button
             v-if="CRUD & 1"
             @click="doDelete(prop.row)"
-            :title="$t('Util.delete')"
+            :title="$i18n.global.t('Util.delete')"
             type="danger"
             size="small"
           >
@@ -80,7 +80,7 @@
             <hr />
             <el-button @click="$router.go(-1)" type="primary">
               <i class="fa-fw fas fa-chevron-left"></i>
-              \{{ $t('Theme.back') }}
+              \{{ $i18n.global.t('Theme.back') }}
             </el-button>
           </div>
         </div>
@@ -94,7 +94,7 @@
       >
         <el-form>
           {{#each form}}
-          <el-form-item :label="$t(inputForm.{{this.key}}.label)">
+          <el-form-item :label="$i18n.global.t(inputForm.{{this.key}}.label)">
           {{#if this.spec.options}}
             <status
               :value="item[inputForm.{{this.key}}.id]"
@@ -105,11 +105,11 @@
           {{/if}}
           </el-form-item>
           {{/each}}
-          <el-form-item :label="$t('Util.operate')">
+          <el-form-item :label="$i18n.global.t('Util.operate')">
             <el-button
               v-if="CRUD & 4"
               @click="handleInfo(item.{{~key~}})"
-              :title="$t('Util.view')"
+              :title="$i18n.global.t('Util.view')"
               type="info"
               size="small"
             >
@@ -118,7 +118,7 @@
             <el-button
               v-if="CRUD & 2"
               @click="handleModify(item.{{~key~}})"
-              :title="$t('Util.edit')"
+              :title="$i18n.global.t('Util.edit')"
               type="success"
               size="small"
             >
@@ -127,7 +127,7 @@
             <el-button
               v-if="CRUD & 1"
               @click="doDelete(item)"
-              :title="$t('Util.delete')"
+              :title="$i18n.global.t('Util.delete')"
               type="danger"
               size="small"
             >
@@ -139,14 +139,14 @@
     </div>
     <el-dialog
       v-model="dialogCreate"
-      :title="$t('Theme.create')"
+      :title="$i18n.global.t('Theme.create')"
       custom-class="RWD-Dialog"
     >
       <create @close="dialogCreate = false" @update="getLists" />
     </el-dialog>
     <el-dialog
       v-model="dialogModify"
-      :title="$t('Theme.modify')"
+      :title="$i18n.global.t('Theme.modify')"
       custom-class="RWD-Dialog"
     >
       <modify
@@ -160,7 +160,7 @@
     </el-dialog>
     <el-dialog
       v-model="dialogInfo"
-      :title="$t('Theme.info')"
+      :title="$i18n.global.t('Theme.info')"
       custom-class="RWD-Dialog"
     >
       <info
@@ -174,7 +174,7 @@
     </el-dialog>
     <el-dialog
       v-model="dialogAdvSearch"
-      :title="$t('Theme.AdvancedSearch')"
+      :title="$i18n.global.t('Theme.AdvancedSearch')"
       custom-class="RWD-Dialog"
     >
       <advSearch @close="dialogAdvSearch = false" />

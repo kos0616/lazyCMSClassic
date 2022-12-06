@@ -5,7 +5,7 @@
   >
     {{#each form}}
     <el-form-item
-      :label="$t(inputForm.{{this.key}}.label)"
+      :label="$i18n.global.t(inputForm.{{this.key}}.label)"
     >
     {{#if this.spec.options}}
       <status

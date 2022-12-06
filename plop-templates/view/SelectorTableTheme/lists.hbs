@@ -3,7 +3,7 @@
     <pager
       @searching="handleSearch"
       :paginator="paginator"
-      :placeholder="$t('{{properCase ROUTER_FIRST}}.{{ROUTER_LAST}}.placeholder')"
+      :placeholder="$i18n.global.t('{{properCase ROUTER_FIRST}}.{{ROUTER_LAST}}.placeholder')"
     />
     <el-table
       v-loading="$store.state.loading.isShow"
@@ -15,11 +15,11 @@
       size="mini"
       class="shadow-none"
     >
-      <el-table-column :label="$t('Util.insert')" width="80">
+      <el-table-column :label="$i18n.global.t('Util.insert')" width="80">
         <template #default="prop">
           <el-button
             @click="$emit('add', prop.row)"
-            :title="$t('Util.insert')"
+            :title="$i18n.global.t('Util.insert')"
             :disabled="exists.includes(prop.row.{{key}})"
             type="success"
             size="small"
@@ -30,7 +30,7 @@
       </el-table-column>
 
       <el-table-column
-        :label="$t('{{properCase ROUTER_FIRST}}.{{ROUTER_LAST}}.{{form.0.key}}')"
+        :label="$i18n.global.t('{{properCase ROUTER_FIRST}}.{{ROUTER_LAST}}.{{form.0.key}}')"
         prop="{{form.0.id}}"
       />
     </el-table>
