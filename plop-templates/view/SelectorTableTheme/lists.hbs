@@ -52,6 +52,7 @@ import Lists, { item } from '../Service/{{ROUTER_LAST}}Lists';
 export default defineComponent({
   name: '{{dashCase BASE_NAME}}--subLists',
   components: { pager },
+  emits: ["add"],
   props: {
     exists: { type: Array as PropType<number[]>, default: () => [] },
   },
