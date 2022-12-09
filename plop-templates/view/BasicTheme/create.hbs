@@ -2,7 +2,7 @@
   <el-form
     class="detail-wrap d-block"
     v-loading="$store.state.loading.isShow"
-    @submit.prevent="submitForm"
+    @submit.prevent="handleSubmitForm"
     :model="form"
     ref="REF_FORM"
     label-width="100px"
