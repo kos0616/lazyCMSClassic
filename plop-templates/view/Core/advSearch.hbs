@@ -1,5 +1,10 @@
 <template>
-  <el-form @submit.prevent="advSearch" @reset.prevent="resetForm" :model="form">
+  <el-form
+  @submit.prevent="advSearch"
+  @reset.prevent="resetForm"
+  :model="form"
+  label-width="100px"
+  >
     {{#each form}}
     <el-form-item
       :label="$i18n.global.t(inputForm.{{this.key}}.label)"
