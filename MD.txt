@@ -1,41 +1,24 @@
-NODE_313
-cp3_jtoctg_id
-CPKG-30000-JuziTransaction
-會員管理 > 金流交易 API
-此項目權限依附於 juziTransaction/paymentFlowTradingRecord/lists
+NODE_238
+cp12_nor_id
+CPKG-120000-NotificationSystem
+通報作業 > 通報申請 API
+此項目權限依附於 notificationSystem/notify-order/lists
+新增
 
 項目	內容	說明	驗證	備註
-路徑	juziTransaction/paymentFlowTradingRecord/lists			
+路徑	notificationSystem/notifyOrder-application/create			
 方法	POST			
-權限	新增			
+權限	-			
 參數				
-
-參數	說明	備註
-cp3_jtoctg_cp3_jtor_id	母單ID	
-cp3_jtoctg_p3_ant_id	帳號ID	
-cp3_jtoctg_serial_number	交易單號	
-cp3_jtoctg_transaction_method	交易方式	對應交易方式常數
-cp3_jtoctg_feature_string	交易特徵碼	
-cp3_jtoctg_trading_pay_content	交易內容(支付內容)	json, 內有交易雙方的兩筆交易內容
-cp3_jtoctg_status	狀態	3.已完成 2.已付款 0.待付款 -1.申訴中 -2.取消
-cp3_jtoctg_pay_fee	手續費	
-cp3_jtoctg_tariff	費率	
-cp3_jtoctg_created_at	建立時間	unixtime
-cp3_jtoctg_allonger_at	點擊延長交易時的時間	null,unixtime
-cp3_jtoctg_overdue_at	逾期時間	unixtime
-cp3_jtoctg_completion_at	完成時間	null,unixtime
-cp3_jtoctg_memo	備註	
-cp3_jtoctg_seller_memo	賣方備註	
-cp3_jtoctg_buyer_memo	買方備註	
-account	帳號資訊	
-account.p3_ant_account	帳號	
-member_profile	會員個人訊息	
-member_profile.cp1_ple_name	會員暱稱	
-member	會員	
-member.avatar	會員頭像	P7 file 格式,沒資料時為null
-parent_order	掛單資訊	參閱交易單結構
-parent_order.account	掛單建單者帳號	
-parent_order.member_profile	掛單建單者會員暱稱	
-files	檔案	
-cp3_jtoctg_p21_cor_id	金流代收	null,整數
-cp3_jtoctg_p21_por_id	金流代付	null,整數
+cp12_nor_work_type	作業項目類別	必填,in{甲,乙,丙,丁}	
+cp12_nor_work_name	作業名稱	必填,字串	
+cp12_nor_work_address_area	作業地址(縣市)	必填,字串	
+cp12_nor_work_address_dist	作業地址(行政區)	必填,字串	
+cp12_nor_work_address	作業地址	必填,字串	
+cp12_nor_work_start_date	開工日期	必填,yyyy-mm-dd	
+cp12_nor_work_end_date	完工日期	必填,yyyy-mm-dd	
+cp12_nor_principal	現場負責人	必填,字串	
+cp12_nor_principal_phone	現場負責人手機	必填,字串	
+cp12_nor_custom	自訂項目	json	
+p7_file_ids	檔案IDs	整數陣列	
+p7_file_ids[]	檔案ID	整數	
